@@ -111,7 +111,7 @@ local function loadzlibData(hen, fname)
 	return love.data.decompress('data', 'zlib' ,love.filesystem.newFileData(fname))
 end
 local function loadgzData(hen, fname)
-	return love.data.decompress('data', 'gz' ,love.filesystem.newFileData(fname))
+	return love.data.decompress('data', 'gzip' ,love.filesystem.newFileData(fname))
 end
 local function loadFontData(hen, fname)
 	return love.filesystem.newFileData(fname)
@@ -139,7 +139,7 @@ end
 
 -- read an apps directory tree
 local function dirTree(hen, dir, t)
-	local ret = false
+	local ret
 	if not t then
 		t = {}
 		ret = t
@@ -151,8 +151,10 @@ local function dirTree(hen, dir, t)
 	tinsert(t, dir)
 	for _, v in ipairs(lfsDir(dir)) do
 		local n = dir .. v
-		if love.filesystem.getInfo(n).type == 'directory' and n ~= '/❤️' then
-			dirTree(hen, dir .. v .. '/', t)
+		if not n:find('/.', 1, true) then
+			if love.filesystem.getInfo(n).type == 'directory' and n ~= '/❤️' then
+				dirTree(hen, dir .. v .. '/', t)
+			end
 		end
 	end
 	return ret
@@ -192,7 +194,7 @@ local function dirLoadCode(hen, v)
 			end
 		end
 	elseif type(ret) == 'nil' then
-		if henConfig.hen.autostore then -- if we are configured to autostore, so that
+		if HenConfig.hen.autostore then -- if we are configured to autostore, so that
 			for _, n in ipairs(lfsDir(v)) do
 				if n:sub(-4) == '.lua' then
 					hen.addStorage(hen, v .. n)
@@ -228,8 +230,9 @@ local function dirLoadData(hen, v)
 			end
 		end
 	elseif type(ret) == 'nil' then
-		if henConfig.hen.autostore then -- if we are configured to autostore, so that
+		if HenConfig.hen.autostore then -- if we are configured to autostore, so that
 			for _, n in ipairs(lfsDir(v)) do
+				print(v .. n)
 				hen.addStorage(hen, v .. n)
 			end
 		end
@@ -313,7 +316,7 @@ end
 local function installInto(hen, to_grp, to_name, obj)
 	to_grp, to_name = breakup(to_grp, to_name)
 	if to_name then
-		subtable(hen.state, to_grp)[name] = obj
+		subtable(hen.state, to_grp)[to_name] = obj
 	else
 		tinsert(subtable(hen.state, to_grp), obj)
 	end
@@ -342,6 +345,7 @@ end
 local function addStorage(hen, name)
 	local grp, fn, ext = string.match(name, "^(.-)([^\\/]-)(%.[^\\/%.]-)%.?$")
 	if grp == '/' then grp = '/~/' end
+	if grp == nil or fn == nil then return end
 	subtable(hen.storage, dir2dot(grp:sub(2, -2)))[fn] = name
 end
 
@@ -585,7 +589,7 @@ local function stateDraw()
 	lgclear(xhen.bgcolor)
 	lgsetColor(xhen.fgcolor)
 	-- make everything draw
-	for _, v in ipairs(dps) do
+	for i, v in ipairs(dps) do
 		v._draw_pos = i
 		v:draw(xhen)
 	end
@@ -608,7 +612,6 @@ local function stateUpdate(dt)
 		error("stateUpdate(): hen has no screen:MainScreen!")
 	end
 	for _, v in ipairs(ups) do
-		if v.name == 'MainScreen' then screenupdated = true end
 		v:update(xhen, dt)
 	end
 	-- remove killed objects
@@ -656,7 +659,7 @@ end
 -- ********************************************************************************
 -- assemble!
 return function(hen)
-	if log then log('---\nhen()\n') end
+	if Log then Log('---\nhen()\n') end
 	-- hen's internal function table
 	hen.dirTree = dirTree
 	hen.dirLoadCode = dirLoadCode
@@ -714,7 +717,7 @@ return function(hen)
 	hen.loader['.glsl'] = loadBinaryData
 	hen.loader['.json'] = loadJsonData
 	hen.loader['.ini'] = loadIniData
-	hen.loader['.ttf'] = loadTtfData
+	hen.loader['.ttf'] = loadFontData
 	-- state reserved group names
 	hen.nameReserved = { 	draw = true, _draw = true, update = true, _update = true, 
 												null = true, ['~'] = true }
@@ -751,9 +754,9 @@ return function(hen)
 			bgcolor = { 0, 0, 0, 0 },
 			fgcolor = { 1, 1, 1, 1 },
 			box = { x = sx, y = sy, z = 1, w = sw, h = sh }	})
-	-- configure from henConfig.hen
-	hen.bgcolor = henConfig.hen.bgcolor or { 0, 0, 0, 0 }
-	hen.fgcolor = henConfig.hen.fgcolor or { 1, 1, 1, 1 }
+	-- configure from HenConfig.hen
+	hen.bgcolor = HenConfig.hen.bgcolor or { 0, 0, 0, 0 }
+	hen.fgcolor = HenConfig.hen.fgcolor or { 1, 1, 1, 1 }
 	-- setup the logo
 	addArchive(hen, '/❤️/logo/heart.png')
 	addArchive(hen, '/❤️/logo/heart_pattern.png')

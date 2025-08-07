@@ -2,7 +2,10 @@
 	Here we handle object destruction in the Heartful engine
 ]]
 
-local xhen = false
+local util = require '❤️.util'
+local null = util.null
+
+local xhen = null
 
 -- a routine to handle the destruction of the children of an entity
 local function destroyChildren(obj)
@@ -10,7 +13,7 @@ local function destroyChildren(obj)
 		if v.classname then
 			xhen.doClassLogic('destroychild', v, obj)
 		end
-		v:destroy(hen)
+		v:destroy(xhen)
 	end
 end
 

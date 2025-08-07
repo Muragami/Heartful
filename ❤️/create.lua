@@ -33,7 +33,7 @@ local lgnewimage = love.graphics.newImage
 local maxrects = require '❤️.maxrects'
 local ffi = require 'ffi'
 
-local xhen = false
+local xhen = null
 
 -- construct a new maxrects packer class for a new raster layer
 local function newPacker(width, height)	return maxrects.new(width, height, false) end
@@ -80,7 +80,7 @@ end
 local function installBase(obj)
 	obj.addChild = addChild
 	obj.removeChild = removeChild
-	obj.removeChildern = removeChildern
+	obj.removeChildern = removeChildren
 end
 
 -- ********************************************************************************
@@ -138,7 +138,7 @@ local function setScreenShader(obj, shader)
 	if not obj.own_shader then obj.own_shader = {} end
 	local t = obj.own_shader
 	for k, v in pairs(obj.layer) do
-		if not v:getShader(hen) then t[k] = v	end
+		if not v:getShader(xhen) then t[k] = v	end
 	end
 	for k, v in pairs(t) do
 		v:setShader(shader, true) -- true so the layer knows it's a call from us
@@ -319,10 +319,14 @@ local function layerClear(obj)
 end
 
 local function setBuffered(obj)
-	if obj.box.w > loveLimit.texturesize or obj.box.h > loveLimit.texturesize then
+	if obj.box.w > LoveLimit.texturesize or obj.box.h > LoveLimit.texturesize then
 		error('setBuffered() cannot create a canvas ' .. obj.box.w .. 'x' .. obj.box.w .. ' exceeds maximum texture size')
 	end
 	obj.canvas = love.graphics.newCanvas(obj.box.w, obj.box.h)
+end
+
+local function isBuffered(obj)
+	return obj.canvas ~= nil
 end
 
 -- install all layer functions
@@ -413,7 +417,7 @@ local function layerRasterClear(layer)
 		if rem == remove and rmap[v.imgdata] then 
 				-- reference counting for this raster data
 			rmap[v.imgdata] = rmap[v.imgdata] - 1
-			if rmap[thing.imgdata] == 0 then
+			if rmap[v.imgdata] == 0 then
 				rasterchange = true
 			end
 		end
@@ -640,7 +644,7 @@ return {
 		installDrawable(obj)
 		installRasterLayer(obj)
 		obj.targetpacking = 0.7
-		obj.limit = math.min(loveLimit.texturesize, 16384)
+		obj.limit = math.min(LoveLimit.texturesize, 16384)
 		if obj.inherit then
 			-- inherit shared raster memory of another layer
 			obj._data = obj.inherit.data

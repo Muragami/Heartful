@@ -31,6 +31,9 @@ local lip = require '❤️.LIP'
 local json = require '❤️.json'
 local tween = require '❤️.tween'
 local lovebird = require '❤️.lovebird'
+local util = require '❤️.util'
+
+local null = util.null
 
 -- libraries used by hen, and expose them for the user if they want to dig deeper
 hen.lib = { lume = lume, inspect = inspect, tween = tween, lip = lip, lovebird = lovebird, json = json }
@@ -42,7 +45,7 @@ hen.archive = { }
 hen.storage = { }
 -- a table of loaders for various file extensions
 hen.loader = { }
--- a table of logic to apply to objects in the system
+-- a table of Logic to apply to objects in the system
 hen.logic = { }
 -- a table of class tables that index classed objects
 hen.classindex = { }
@@ -56,18 +59,18 @@ hen.enabled = {
 	event_joystick = true,
 	event_gamepad = true }
 
--- install a simple log function if verbose is set in game.json
-if henConfig.hen.verbose then
-	function log(txt)
+-- install a simple Log function if verbose is set in game.json
+if HenConfig.hen.verbose then
+	function Log(txt)
 		print(txt)
-		if henConfig.hen.logging then
-			henLog:write(txt)
+		if HenConfig.hen.Logging then
+			HenLog:write(txt)
 		end
 	end
-	if henConfig.hen.logging then
-		love.filesystem.write("hen.log", "")
-		henLog = love.filesystem.newFile("hen.log", "a")
-		henLog:setBuffer("none")
+	if HenConfig.hen.Logging then
+		love.filesystem.write("hen.Log", "")
+		HenLog = love.filesystem.newFile("hen.Log", "a")
+		HenLog:setBuffer("none")
 	end
 else end
 
@@ -78,13 +81,13 @@ require '❤️.hen'(hen)
 -- love linkage follows
 
 function love.load(arg, unfilteredArg)
-	loveLimit = love.graphics.getSystemLimits()
-	local entry = false
-	if log then log('---\nlove.load()\n') end
+	LoveLimit = love.graphics.getSystemLimits()
+	local entry = null
+	if Log then Log('---\nlove.load()\n') end
 	-- read in and store the directory tree of this app
 	hen:dirTree()
-	-- log log log, log all day
-	if log then log('---\ndirTree = ' .. inspect(hen.dir) .. '\n') end
+	-- Log Log Log, Log all day
+	if Log then Log('---\ndirTree = ' .. inspect(hen.dir) .. '\n') end
 	-- now walk that tree and load any core _code and _data
 	for _, v in ipairs(hen.dir) do
 		if v == '/' then
@@ -103,18 +106,18 @@ function love.load(arg, unfilteredArg)
 			hen:dirLoadData(v)
 		end
 	end
-	-- log log log, log all day
-	if log then log('---\nhen.archive = ' .. inspect(hen.archive) .. "\n") end
-	if log then log('---\nhen.storage = ' .. inspect(hen.storage) .. "\n") end
+	-- Log Log Log, Log all day
+	if Log then Log('---\nhen.archive = ' .. inspect(hen.archive) .. "\n") end
+	if Log then Log('---\nhen.storage = ' .. inspect(hen.storage) .. "\n") end
 	-- load anything listed in hen.preload from conf.json
-	if henConfig.hen.preload and type(henConfig.hen.preload) == 'table' then
-		for i, v in ipairs(henConfig.hen.preload) do
-			hen:load(nil, v, henConfig)
+	if HenConfig.hen.preload and type(HenConfig.hen.preload) == 'table' then
+		for i, v in ipairs(HenConfig.hen.preload) do
+			hen:load(nil, v, HenConfig)
 		end
 	end
 	-- if we have an entry state from conf.json use that
-	if henConfig.hen.enter and type(henConfig.hen.enter) == 'string' then
-		entry = { henConfig.hen.enter, 'state' }
+	if HenConfig.hen.enter and type(HenConfig.hen.enter) == 'string' then
+		entry = { HenConfig.hen.enter, 'state' }
 	else
 		-- or if we don't, see if the user supplied a hen.begin function in main.lua
 		if not hen.begin or type(hen.begin) ~= 'function' then
@@ -124,18 +127,18 @@ function love.load(arg, unfilteredArg)
 		entry = hen.begin(arg, unfilteredArg)
 	end
 	-- if we still have no entry point, just error out
-	if not entry then
+	if entry == null then
 		error("hen has no entry point defined, did you not set 'enter' in game.json or define a hen.begin() function?")
 	end
-	-- if we have not disabled the hen logo, enter that state and link it to the entry point given
-	if not henConfig.hen.nologo then
+	-- if we have not disabled the hen Logo, enter that state and link it to the entry point given
+	if not HenConfig.hen.noLogo then
 		hen:enter('HenLogo', 'state', { args = arg, entry = entry })
 	else
 		hen:enter(entry[1], entry[2])
 	end
-	-- log log log, log all day
-	if log then log('---\nhen.state = ' .. inspect(hen.state) .. '\n') end
-	if log then log('---\nhen.classindex = ' .. inspect(hen.classindex) .. '\n') end
+	-- Log Log Log, Log all day
+	if Log then Log('---\nhen.state = ' .. inspect(hen.state) .. '\n') end
+	if Log then Log('---\nhen.classindex = ' .. inspect(hen.classindex) .. '\n') end
 end
 
 function love.update(dt)
@@ -226,7 +229,7 @@ end
 
 function love.resize(w, h)
 	if not enable.event_window then return end
-	hen:dispatch('resize!', f)
+	hen:dispatch('resize!', w, h)
 end
 
 function love.visible(f)

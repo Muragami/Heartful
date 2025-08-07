@@ -22,6 +22,6 @@ end
 -- read the conf from .json and give it to lua
 function love.conf(t)
 	local json = require '❤️.json'
-	henConfig = json.decode(love.filesystem.read('conf.json'))
-	copyInto(henConfig, t)
+	HenConfig = json.decode(love.filesystem.read('conf.json'))
+	copyInto(HenConfig, t)
 end

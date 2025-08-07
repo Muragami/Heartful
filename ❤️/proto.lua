@@ -206,10 +206,10 @@ local proto = {
 
 for k, v in pairs(proto) do -- map the functions for all objects
 	if type(v) == 'table' then
-		v.create = create[k] or nocall
-		v.destroy = destroy[k] or nocall
-		v.update = update[k] or nocall
-		v.draw = draw[k] or nocall
+		v.create = create[k] or noCall
+		v.destroy = destroy[k] or noCall
+		v.update = update[k] or noCall
+		v.draw = draw[k] or noCall
 	end
 end 												-- now all proto entries have .create() and such calls
 

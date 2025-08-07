@@ -66,15 +66,15 @@ local function pasteImage(to, from, x, y, w, h, tow)
 	local pto, pfrom = to:getFFIPointer(), from:getFFIPointer()
 	local fcopy = ffi.copy
 	for dy = 0, h - 1, 1 do -- copy row by row using ffi.copy()
-		fcopy(pto + x * 4 + (dy * tow * 4), pfrom + (dy * w * 4), w * 4)
+		fcopy(pto + x * 4 + ((dy + y) * tow * 4), pfrom + (dy * w * 4), w * 4)
 	end
 end
 
-local function trypack(pack, collection)
+local function trypack(pack, list)
 	-- try each available sorting method to pack the list into the packer
-	if pack:insertCollection(lost, 'SortArea') then return true end
-	if pack:insertCollection(lost, 'SortShortSide') then return true end
-	if pack:insertCollection(lost, 'SortLongSide') then return true end
+	if pack:insertCollection(list, 'SortArea') then return true end
+	if pack:insertCollection(list, 'SortShortSide') then return true end
+	if pack:insertCollection(list, 'SortLongSide') then return true end
 	return false
 end
 
@@ -84,7 +84,7 @@ local function buildRaster(layer)
 	local list = layer.rasterlist
 	local mapw, maph = layer.rasterbox.w, layer.rasterbox.h 
 	local mappixels = mapw * maph
-	local expandhorizonal = true
+	local expandhorizontal = true
 	local contentpixels = 0
 	local rborder = layer.rasterborder
 	for _, v in ipairs(list) do
@@ -93,7 +93,7 @@ local function buildRaster(layer)
 	-- target 70% efficiency for initial packing
 	while mappixels * layer.targetpacking < contentpixels do
 		if expandhorizontal then
-			mapW = mapw * 2
+			mapw = mapw * 2
 			expandhorizontal = false
 		else
 			maph = maph * 2
@@ -105,7 +105,7 @@ local function buildRaster(layer)
 	while not trypack(pack, list) and mapw <= layer.limit and maph <= layer.limit do
 		-- failure, expand and try again
 		if expandhorizontal then
-			mapW = mapw * 2
+			mapw = mapw * 2
 			expandhorizontal = false
 		else
 			maph = maph * 2
@@ -135,7 +135,7 @@ local function buildRaster(layer)
 	local rmap = layer.rastermap
 	for _, lobj in ipairs(list) do
 		local obj = lobj[5] -- array index 5 is the data content in our packer list, so we need that
-		if not rmap[obj.imgdata] then 
+		if not rmap[obj.imgdata] then
 			rmap[obj.imgdata] = 1
 		else
 			rmap[obj.imgdata] = rmap[obj.imgdata] + 1
@@ -143,7 +143,7 @@ local function buildRaster(layer)
 		obj.quad = lgnewquad(lobj[1] + rborder, lobj[2] + rborder, lobj[3], lobj[4], mapw, maph)
 		obj._image = layer._image
 		blackBorder(layer.raster, rborder, lobj[1], lobj[2], lobj[3], lobj[4], mapw)
-		pasteImage(layer.raster, obj.imgdata, lobj[1] + rborder, lobj[2] + rborder, lobj[3], lobj[4], mapw, maph)
+		pasteImage(layer.raster, obj.imgdata, lobj[1] + rborder, lobj[2] + rborder, lobj[3], lobj[4], mapw)
 		-- if the object needs to build internal quads, let it do that
 		if obj.buildQuads then obj:buildQuads(lobj[1], lobj[2], lobj[3], lobj[4], mapw, maph) end
 	end
@@ -160,10 +160,10 @@ return {
 		updateChildren(obj, dt)
 	end,
 	entity = function(obj, dt)
-		updateChildren(obj, dt) 
+		updateChildren(obj, dt)
 	end,
 	nonentity = function(obj, dt)
-		updateChildren(obj, dt) 
+		updateChildren(obj, dt)
 	end,
 	shadow = function(obj, dt)
 		if obj.alias and obj.alias.update then
@@ -197,55 +197,55 @@ return {
 		end
 		updateChildren(obj, dt)
 	end,
-	basiclayer = function(obj, dt) 
+	basiclayer = function(obj, dt)
 		for _, v in ipairs(obj.entity) do
 			v:update(dt)
 		end
 		updateChildren(obj, dt)
 	end,
-	userlayer = function(obj, dt) 
+	userlayer = function(obj, dt)
 		for _, v in ipairs(obj.entity) do
 			v:update(dt)
 		end
 		updateChildren(obj, dt)
 	end,
-	art = function(obj, dt) 
+	art = function(obj, dt)
 		updateChildren(obj, dt)
 	end,
-	image = function(obj, dt) 
+	image = function(obj, dt)
 		updateChildren(obj, dt)
 	end,
 	sprite = function(obj, dt)
-		updateChildren(obj, dt) 
-	end,
-	bitmap = function(obj, dt) 
 		updateChildren(obj, dt)
 	end,
-	bitmaptext = function(obj, dt) 
+	bitmap = function(obj, dt)
 		updateChildren(obj, dt)
 	end,
-	ttftext = function(obj, dt) 
+	bitmaptext = function(obj, dt)
+		updateChildren(obj, dt)
+	end,
+	ttftext = function(obj, dt)
 		updateChildren(obj, dt)
 	end,
 	visual = function(obj, dt)
-		updateChildren(obj, dt) 
+		updateChildren(obj, dt)
 	end,	
 	shader = function(obj, dt)
-		updateChildren(obj, dt) 
+		updateChildren(obj, dt)
 	end,
-	config = function(obj, dt) 
+	config = function(obj, dt)
 		updateChildren(obj, dt)
 	end,
 	sample = function(obj, dt)
-		updateChildren(obj, dt) 
+		updateChildren(obj, dt)
 	end,
-	stream = function(obj, dt) 
+	stream = function(obj, dt)
 		updateChildren(obj, dt)
 	end,
 	map = function(obj, dt)
-		updateChildren(obj, dt) 
+		updateChildren(obj, dt)
 	end,
-	tiling = function(obj, dt) 
+	tiling = function(obj, dt)
 		updateChildren(obj, dt)
 	end,
 }
