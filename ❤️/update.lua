@@ -62,19 +62,16 @@ local function blackBorder(to, rsize, x, y, w, h, tow)
 end
 
 -- paste 4 byte rgba8 image data into each other, to build the raster map image
-local function pasteImage(to, from, x, y, w, h, tow)
-	local pto, pfrom = to:getFFIPointer(), from:getFFIPointer()
-	local fcopy = ffi.copy
-	for dy = 0, h - 1, 1 do -- copy row by row using ffi.copy()
-		fcopy(pto + x * 4 + ((dy + y) * tow * 4), pfrom + (dy * w * 4), w * 4)
-	end
+local function pasteImage(to, from, x, y, w, h)
+	to:paste(from, x, y, 0, 0, w, h)
 end
 
 local function trypack(pack, list)
 	-- try each available sorting method to pack the list into the packer
-	if pack:insertCollection(list, 'SortArea') then return true end
-	if pack:insertCollection(list, 'SortShortSide') then return true end
-	if pack:insertCollection(list, 'SortLongSide') then return true end
+	if pack:insertCollection(list, 'SortArea') then return true
+		elseif pack:insertCollection(list, 'SortShortSide') then return true
+		elseif pack:insertCollection(list, 'SortLongSide') then return true 
+		end
 	return false
 end
 
@@ -116,20 +113,13 @@ local function buildRaster(layer)
 	end
 	-- did we fail out at too large a size? if so error out
 	if mapw > layer.limit or maph > layer.limit then error('rasterlayer:update() failed, size exceeded maximum raster map dimension: ' .. layer.limit) end
-	-- or, success! first let's see if we have enough memory
-	local megabytes = layer.megabytes
-	while mapw * maph * 4 > megabytes * 1048576 do
-		megabytes = megabytes * 2
+	if mapw > layer.rasterbox.w or maph > layer.rasterbox.h then
+		-- grow the raster image data as needed
+		layer.raster = love.image.newImageData(mapw, maph, 'rgba8', layer._data)
+		layer._image = lgnewimage(layer.raster)
+		layer.rasterbox.w = mapw
+		layer.rasterbox.h = maph
 	end
-	if megabytes > layer.megabytes then
-		layer._data = love.data.newByteData(megabytes * 1048576)
-		layer.megabytes = megabytes
-	end
-	-- no matter what we are making a new image
-	layer.raster = love.image.newImageData(mapw, maph, 'rgba8', layer._data)
-	layer._image = lgnewimage(layer.raster)
-	layer.rasterbox.w = mapw
-	layer.rasterbox.h = maph
 	-- now pack all contents into the image, and rebuild the rastermap
 	layer.rastermap = {}
 	local rmap = layer.rastermap
@@ -143,12 +133,13 @@ local function buildRaster(layer)
 		obj.quad = lgnewquad(lobj[1] + rborder, lobj[2] + rborder, lobj[3], lobj[4], mapw, maph)
 		obj._image = layer._image
 		blackBorder(layer.raster, rborder, lobj[1], lobj[2], lobj[3], lobj[4], mapw)
-		pasteImage(layer.raster, obj.imgdata, lobj[1] + rborder, lobj[2] + rborder, lobj[3], lobj[4], mapw)
+		pasteImage(layer.raster, obj.imgdata, lobj[1] + rborder, lobj[2] + rborder, lobj[3], lobj[4])
 		-- if the object needs to build internal quads, let it do that
 		if obj.buildQuads then obj:buildQuads(lobj[1], lobj[2], lobj[3], lobj[4], mapw, maph) end
 	end
 	layer.filledpercent = contentpixels / (mapw * maph) * 100.0
 	layer.rasterchange = false
+	layer._image:replacePixels(layer.raster)
 end
 
 -- update code for all the things

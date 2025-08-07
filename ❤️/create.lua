@@ -652,9 +652,8 @@ return {
 			obj.rasterbox = obj.inherit.rasterbox
 		else
 			-- create the default image memory for the raster we draw from
-			obj._data = love.data.newByteData(obj.megabytes * 1048576)
 			local sz = math.floor(math.sqrt(obj.megabytes * 1048576 * 0.25))
-			obj.raster = love.image.newImageData(sz, sz, 'rgba8', obj._data)
+			obj.raster = love.image.newImageData(sz, sz, 'rgba8')
 			obj.rasterbox.w = sz
 			obj.rasterbox.h = sz
 		end
