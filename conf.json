@@ -1,0 +1,22 @@
+{
+	"identity": "Hen Demo",
+	"window": {
+		"title": "Hen Demo",
+		"width": 720,
+		"height": 720
+	},
+	"hen": {
+		"verbose": true,
+		"logging" : true,
+		"debug": false,
+		"nologo": false,
+		"autostore": true,
+		"autoscale": false,
+		"enter": "opening",
+		"preload": [
+			"~:land"
+		],
+		"bgcolor" : [ 0.1, 0.2, 0.0, 0.0 ],
+		"fgcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
+	}
+}
