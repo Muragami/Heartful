@@ -81,7 +81,7 @@ local function doClassLogic(event, obj, a, b, c, d, e, f)
 	if xhenlogic[name] then
 		for _, l in ipairs(xhenlogic[name]) do
 			if l[name] then
-					l[name](l, xhen, obj, a, b, c, d, e, f)
+				l[name](l, xhen, obj, a, b, c, d, e, f)
 			end
 		end
 	end
@@ -93,7 +93,7 @@ local function doRootLogic(name, a, b, c, d, e, f)
 	if xhenlogic[name] then
 		for _, l in ipairs(xhenlogic[name]) do
 			if l[name] then
-					l[name](l, xhen, name, a, b, c, d, e, f)
+				l[name](l, xhen, name, a, b, c, d, e, f)
 			end
 		end
 	end
@@ -105,13 +105,13 @@ local function loadImageData(hen, fname) return liNewImageData(fname) end
 local function loadSoundData(hen, fname) return lsNewSoundData(fname) end
 local function loadBinaryData(hen, fname) return lfsRead(fname) end
 local function loadlz4Data(hen, fname)
-	return love.data.decompress('data', 'lz4' ,love.filesystem.newFileData(fname))
+	return love.data.decompress('data', 'lz4', love.filesystem.newFileData(fname))
 end
 local function loadzlibData(hen, fname)
-	return love.data.decompress('data', 'zlib' ,love.filesystem.newFileData(fname))
+	return love.data.decompress('data', 'zlib', love.filesystem.newFileData(fname))
 end
 local function loadgzData(hen, fname)
-	return love.data.decompress('data', 'gzip' ,love.filesystem.newFileData(fname))
+	return love.data.decompress('data', 'gzip', love.filesystem.newFileData(fname))
 end
 local function loadFontData(hen, fname)
 	return love.filesystem.newFileData(fname)
@@ -253,10 +253,10 @@ local function get(hen, grp, name, copy)
 		while obj.alias do obj = obj.alias end
 		if not obj then return null end
 		if copy then
-				return makeCopy(obj)
-			else
-				return obj
-			end
+			return makeCopy(obj)
+		else
+			return obj
+		end
 	end
 end
 
@@ -265,10 +265,10 @@ local function read(hen, grp, name, copy)
 	grp, name = breakup(grp, name)
 	if hen.archive[grp] and hen.archive[grp][name] then
 		if copy then
-				return makeCopy(hen.archive[grp][name])
-			else
-				return hen.archive[grp][name]
-			end
+			return makeCopy(hen.archive[grp][name])
+		else
+			return hen.archive[grp][name]
+		end
 	end
 end
 
@@ -448,7 +448,8 @@ local function hload(hen, grp, name, cfg)
 			end
 			subtable(hen.state, grp)[obj.name] = obj
 		else
-			error('object [' .. combine(grp, name) .. '] has no name, and nameless code libraries and not currently supported')
+			error('object [' ..
+			combine(grp, name) .. '] has no name, and nameless code libraries and not currently supported')
 		end
 		if obj.style == 'functional' then
 			if not obj.load or type(obj.load) ~= 'function' then
@@ -466,7 +467,6 @@ local function hload(hen, grp, name, cfg)
 		if obj.classname then indexClass(obj) end
 		doClassLogic('load', obj)
 	end
-	
 end
 
 -- unload a library
@@ -623,17 +623,17 @@ end
 
 local function add(hen, what, obj)
 	tinsert(subtable(hen.state, what), obj)
-	obj[what .. '_pos' ] = #hen.state[what]
+	obj[what .. '_pos'] = #hen.state[what]
 end
 
 local function remove(hen, what, obj)
-	if not obj[what .. '_pos' ] then return end
-	tremove(subtable(hen.state, what), obj[what .. '_pos' ])
-	obj[what .. '_pos' ] = false
+	if not obj[what .. '_pos'] then return end
+	tremove(subtable(hen.state, what), obj[what .. '_pos'])
+	obj[what .. '_pos'] = false
 end
 
 local function slot(hen, what, obj)
-	return obj[what .. '_pos' ]
+	return obj[what .. '_pos']
 end
 
 local function addLogic(hen, logic)
@@ -719,8 +719,14 @@ return function(hen)
 	hen.loader['.ini'] = loadIniData
 	hen.loader['.ttf'] = loadFontData
 	-- state reserved group names
-	hen.nameReserved = { 	draw = true, _draw = true, update = true, _update = true, 
-												null = true, ['~'] = true }
+	hen.nameReserved = {
+		draw = true,
+		_draw = true,
+		update = true,
+		_update = true,
+		null = true,
+		['~'] = true
+	}
 	-- tables we require
 	hen.prototype = require '❤️.proto'
 	hen.prototype._create._setxhen(hen)
@@ -728,10 +734,10 @@ return function(hen)
 	hen.prototype._update._setxhen(hen)
 	hen.prototype._draw._setxhen(hen)
 	hen.state.draw = stateDraw
-	hen.state._draw = { }
+	hen.state._draw = {}
 	hen.state.update = stateUpdate
-	hen.state._update = { }
-	hen.event = { }
+	hen.state._update = {}
+	hen.event = {}
 	-- the global clock
 	hen.clock = 0
 	hen.clockspeed = 1
@@ -747,13 +753,14 @@ return function(hen)
 	-- create the MainScreen
 	local sx, sy, sw, sh = 0, 0, love.graphics.getDimensions()
 	hen:createInto('screen', 'MainScreen', 'screen', {
-			classname = 'screen',
-			classid = -1,
-			visible = true,
-			dead = false,
-			bgcolor = { 0, 0, 0, 0 },
-			fgcolor = { 1, 1, 1, 1 },
-			box = { x = sx, y = sy, z = 1, w = sw, h = sh }	})
+		classname = 'screen',
+		classid = -1,
+		visible = true,
+		dead = false,
+		bgcolor = { 0, 0, 0, 0 },
+		fgcolor = { 1, 1, 1, 1 },
+		box = { x = sx, y = sy, z = 1, w = sw, h = sh }
+	})
 	-- configure from HenConfig.hen
 	hen.bgcolor = HenConfig.hen.bgcolor or { 0, 0, 0, 0 }
 	hen.fgcolor = HenConfig.hen.fgcolor or { 1, 1, 1, 1 }

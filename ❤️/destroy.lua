@@ -26,16 +26,16 @@ return {
 		destroyChildren(obj)
 	end,
 	entity = function(obj)
-		destroyChildren(obj) 
+		destroyChildren(obj)
 	end,
 	nonentity = function(obj)
-		destroyChildren(obj) 
+		destroyChildren(obj)
 	end,
 	shadow = function(obj)
-		destroyChildren(obj) 
+		destroyChildren(obj)
 	end,
 	duplicate = function(obj)
-		destroyChildren(obj) 
+		destroyChildren(obj)
 	end,
 	screen = function(obj)
 		xhen:remove('_draw', obj)
@@ -45,43 +45,43 @@ return {
 	layer = function(obj)
 		destroyChildren(obj)
 	end,
-	rasterlayer = function(obj) 
+	rasterlayer = function(obj)
 		destroyChildren(obj)
 	end,
-	basiclayer = function(obj) 
+	basiclayer = function(obj)
 		destroyChildren(obj)
 	end,
-	userlayer = function(obj) 
+	userlayer = function(obj)
 		destroyChildren(obj)
 	end,
-	shape = function(obj) 
+	shape = function(obj)
 		destroyChildren(obj)
 	end,
 	shapes = function(obj)
-		destroyChildren(obj) 
+		destroyChildren(obj)
 	end,
-	image = function(obj) 
+	image = function(obj)
 		destroyChildren(obj)
 	end,
 	sprite = function(obj)
-		destroyChildren(obj) 
-	end,
-	bitmap = function(obj) 
 		destroyChildren(obj)
 	end,
-	font = function(obj) 
+	bitmap = function(obj)
+		destroyChildren(obj)
+	end,
+	font = function(obj)
 		destroyChildren(obj)
 	end,
 	shader = function(obj)
-		destroyChildren(obj) 
+		destroyChildren(obj)
 	end,
-	config = function(obj) 
+	config = function(obj)
 		destroyChildren(obj)
 	end,
 	sample = function(obj)
-		destroyChildren(obj) 
+		destroyChildren(obj)
 	end,
-	stream = function(obj) 
+	stream = function(obj)
 		destroyChildren(obj)
 	end,
 }

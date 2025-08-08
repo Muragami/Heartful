@@ -1,12 +1,12 @@
 local LIP = {
-	_VERSION    	= 'LIP ?',
-  _DESCRIPTION 	= 'INI file handling library',
-  _URL         	= 'https://github.com/Dynodzzo/Lua_INI_Parser',
-  _COPYRIGHT    = 'Copyright (c) 2012 Dynodzzo',
-  _NOTES				= [[Modified by muragami (Jason A. Petrasko) 2025 to support encode/decode 
+	_VERSION      = 'LIP ?',
+	_DESCRIPTION  = 'INI file handling library',
+	_URL          = 'https://github.com/Dynodzzo/Lua_INI_Parser',
+	_COPYRIGHT    = 'Copyright (c) 2012 Dynodzzo',
+	_NOTES        = [[Modified by muragami (Jason A. Petrasko) 2025 to support encode/decode
   									string INI data, some code cleanup ]],
-  _LICENSE_TYPE = 'MIT',
-  _LICENSE      = [[
+	_LICENSE_TYPE = 'MIT',
+	_LICENSE      = [[
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
 the Software without restriction, including without limitation the rights to
@@ -24,10 +24,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-]] }
+]]
+}
 
 local function strlines(s)
-				return s:gmatch("(.-)\n")
+	return s:gmatch("(.-)\n")
 end
 
 --- Returns a table containing all the data from the source INI format string.
@@ -46,16 +47,17 @@ function LIP.decode(str)
 		end
 		local param, value = line:match('^([%w|_]+)%s-=%s-(.+)$')
 		if (param and value ~= nil) then
-			if(tonumber(value))then
+			if (tonumber(value)) then
 				value = tonumber(value)
-			elseif(value == 'true')then
+			elseif (value == 'true') then
 				value = true
-			elseif(value == 'false')then
+			elseif (value == 'false') then
 				value = false
 			end
-			if(tonumber(param))then
+			if (tonumber(param)) then
 				param = tonumber(param)
 			end
+			if not data[section] then data[section] = {} end
 			data[section][param] = value
 		end
 	end

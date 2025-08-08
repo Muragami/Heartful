@@ -33,7 +33,7 @@ local maxrects = require '❤️.maxrects'
 local ffi = require 'ffi'
 
 -- construct a new maxrects packer class for a new raster layer
-local function newPacker(width, height)	return maxrects.new(width, height, false) end
+local function newPacker(width, height) return maxrects.new(width, height, false) end
 
 -- function to update all children of an object
 local function updateChildren(obj, dt)
@@ -49,13 +49,13 @@ end
 local function blackBorder(to, rsize, x, y, w, h, tow)
 	local pto = to:getFFIPointer()
 	local ffill = ffi.fill
-	for dy = 0, rsize - 1, 1 do 			-- top border
+	for dy = 0, rsize - 1, 1 do -- top border
 		ffill(pto + x * 4 + (dy * tow * 4), (w + rsize * 2) * 4, 0)
 	end
-	for dy = h, h + rsize - 1, 1 do 	-- bottom border
+	for dy = h, h + rsize - 1, 1 do -- bottom border
 		ffill(pto + x * 4 + (dy * tow * 4), (w + rsize * 2) * 4, 0)
 	end
-	for dy = rsize, h, 1 do 					-- left & right borders
+	for dy = rsize, h, 1 do -- left & right borders
 		ffill(pto + x * 4 + (dy * tow * 4), rsize * 4, 0)
 		ffill(pto + (x + rsize + w) * 4 + (dy * tow * 4), rsize * 4, 0)
 	end
@@ -68,10 +68,13 @@ end
 
 local function trypack(pack, list)
 	-- try each available sorting method to pack the list into the packer
-	if pack:insertCollection(list, 'SortArea') then return true
-		elseif pack:insertCollection(list, 'SortShortSide') then return true
-		elseif pack:insertCollection(list, 'SortLongSide') then return true 
-		end
+	if pack:insertCollection(list, 'SortArea') then
+		return true
+	elseif pack:insertCollection(list, 'SortShortSide') then
+		return true
+	elseif pack:insertCollection(list, 'SortLongSide') then
+		return true
+	end
 	return false
 end
 
@@ -79,7 +82,7 @@ end
 local function buildRaster(layer)
 	if not layer.rasterchange then return end
 	local list = layer.rasterlist
-	local mapw, maph = layer.rasterbox.w, layer.rasterbox.h 
+	local mapw, maph = layer.rasterbox.w, layer.rasterbox.h
 	local mappixels = mapw * maph
 	local expandhorizontal = true
 	local contentpixels = 0
@@ -112,7 +115,8 @@ local function buildRaster(layer)
 		pack = newPacker(mapw, maph)
 	end
 	-- did we fail out at too large a size? if so error out
-	if mapw > layer.limit or maph > layer.limit then error('rasterlayer:update() failed, size exceeded maximum raster map dimension: ' .. layer.limit) end
+	if mapw > layer.limit or maph > layer.limit then error(
+		'rasterlayer:update() failed, size exceeded maximum raster map dimension: ' .. layer.limit) end
 	if mapw > layer.rasterbox.w or maph > layer.rasterbox.h then
 		-- grow the raster image data as needed
 		layer.raster = love.image.newImageData(mapw, maph, 'rgba8', layer._data)
@@ -160,13 +164,13 @@ return {
 		if obj.alias and obj.alias.update then
 			obj.alias.update(obj)
 		end
-		updateChildren(obj, dt) 
+		updateChildren(obj, dt)
 	end,
 	duplicate = function(obj, dt)
 		if obj.alias and obj.alias.update then
 			obj.alias.update(obj)
 		end
-		updateChildren(obj, dt) 
+		updateChildren(obj, dt)
 	end,
 	screen = function(obj, dt)
 		for _, v in ipairs(obj.layer) do
@@ -220,7 +224,7 @@ return {
 	end,
 	visual = function(obj, dt)
 		updateChildren(obj, dt)
-	end,	
+	end,
 	shader = function(obj, dt)
 		updateChildren(obj, dt)
 	end,

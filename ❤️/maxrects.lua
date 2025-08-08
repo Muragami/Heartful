@@ -27,18 +27,18 @@ SOFTWARE.
 local _INVALID = {}
 
 local function _clone(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[_clone(orig_key)] = _clone(orig_value)
-        end
-        setmetatable(copy, _clone(getmetatable(orig)))
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
+	local orig_type = type(orig)
+	local copy
+	if orig_type == 'table' then
+		copy = {}
+		for orig_key, orig_value in next, orig, nil do
+			copy[_clone(orig_key)] = _clone(orig_value)
+		end
+		setmetatable(copy, _clone(getmetatable(orig)))
+	else -- number, string, boolean, etc
+		copy = orig
+	end
+	return copy
 end
 
 local function _copyrect(rect)
@@ -87,7 +87,7 @@ local function _FindPositionForNewNodeBSSF(self, width, height)
 				bestNode[4] = height
 				bestShortSideFit = flippedShortSideFit
 				bestLongSideFit = flippedLongSideFit
-        bestNode[6] = true
+				bestNode[6] = true
 			end
 		end
 	end
@@ -97,7 +97,7 @@ end
 local function _FindPositionForNewNodeBLSF(self, width, height)
 	local bestNode = { 0, 0, 0, 0, false, false }
 
-  local bestShortSideFit, bestLongSideFit = math.huge, math.huge
+	local bestShortSideFit, bestLongSideFit = math.huge, math.huge
 
 	local rectToProcess = #self.freeRectangles
 	for i = 1, rectToProcess, 1 do
@@ -132,7 +132,7 @@ local function _FindPositionForNewNodeBLSF(self, width, height)
 				bestNode[4] = width
 				bestShortSideFit = shortSideFit
 				bestLongSideFit = longSideFit
-        bestNode[6] = true
+				bestNode[6] = true
 			end
 		end
 	end
@@ -142,7 +142,7 @@ end
 local function _FindPositionForNewNodeBAF(self, width, height)
 	local bestNode = { 0, 0, 0, 0, false, false }
 
-  local bestAreaFit, bestShortSideFit = math.huge, math.huge
+	local bestAreaFit, bestShortSideFit = math.huge, math.huge
 
 	local rectToProcess = #self.freeRectangles
 	for i = 1, rectToProcess, 1 do
@@ -177,7 +177,7 @@ local function _FindPositionForNewNodeBAF(self, width, height)
 				bestNode[4] = width
 				bestAreaFit = areaFit
 				bestShortSideFit = shortSideFit
-        bestNode[6] = true
+				bestNode[6] = true
 			end
 		end
 	end
@@ -211,7 +211,7 @@ end
 local function _FindPositionForNewNodeCP(self, width, height)
 	local bestNode = { 0, 0, 0, 0, false, false }
 
-  local bestContactScore = -1
+	local bestContactScore = -1
 
 	local rectToProcess = #self.freeRectangles
 	for i = 1, rectToProcess, 1 do
@@ -243,31 +243,39 @@ end
 
 -- table for our various heuristic functions
 local FreeRectChoiceHeuristic = {
-		BestShortSideFit = _FindPositionForNewNodeBSSF,
-			-- -BSSF: Positions the rectangle against the short side of a free rectangle into which it fits the best.
-		BestLongSideFit = _FindPositionForNewNodeBLSF,
-			-- -BLSF: Positions the rectangle against the long side of a free rectangle into which it fits the best.
-		BestAreaFit = _FindPositionForNewNodeBAF,
-			-- -BAF: Positions the rectangle into the smallest free rect into which it fits.
-		ContactPointRule =  _FindPositionForNewNodeCP }
-			-- -CP: Choosest the placement where the rectangle touches other rects as much as possible.
+	BestShortSideFit = _FindPositionForNewNodeBSSF,
+	-- -BSSF: Positions the rectangle against the short side of a free rectangle into which it fits the best.
+	BestLongSideFit = _FindPositionForNewNodeBLSF,
+	-- -BLSF: Positions the rectangle against the long side of a free rectangle into which it fits the best.
+	BestAreaFit = _FindPositionForNewNodeBAF,
+	-- -BAF: Positions the rectangle into the smallest free rect into which it fits.
+	ContactPointRule = _FindPositionForNewNodeCP
+}
+-- -CP: Choosest the placement where the rectangle touches other rects as much as possible.
 
 -- table for names for the heuristics
 local FreeRectChoiceHeuristicName = {
-		[_FindPositionForNewNodeBSSF] = "BestShortSideFit",
-		[_FindPositionForNewNodeBLSF] = "BestLongSideFit",
-		[_FindPositionForNewNodeBAF] = "BestAreaFit",
-		[_FindPositionForNewNodeCP] = "ContactPointRule" }
+	[_FindPositionForNewNodeBSSF] = "BestShortSideFit",
+	[_FindPositionForNewNodeBLSF] = "BestLongSideFit",
+	[_FindPositionForNewNodeBAF] = "BestAreaFit",
+	[_FindPositionForNewNodeCP] = "ContactPointRule"
+}
 
 local function _IsContainedIn(ra, rb)
 	return ra[1] >= rb[1] and ra[2] >= rb[2]
-				and ra[1] + ra[3] <= rb[1] + rb[3]
-				and ra[2] + ra[4] <= rb[2] + rb[4]
+		and ra[1] + ra[3] <= rb[1] + rb[3]
+		and ra[2] + ra[4] <= rb[2] + rb[4]
 end
 
-MaxRects = { bWidth = 0, bWeight = 0, bFlip = false,
-	freeRectangles = {}, usedRectangles = {},
- 	algorithm = _FindPositionForNewNodeBSSF, scores = {} }
+MaxRects = {
+	bWidth = 0,
+	bWeight = 0,
+	bFlip = false,
+	freeRectangles = {},
+	usedRectangles = {},
+	algorithm = _FindPositionForNewNodeBSSF,
+	scores = {}
+}
 
 function MaxRects:insert(width, height, data)
 	local newNode
@@ -290,11 +298,11 @@ function MaxRects:insert(width, height, data)
 end
 
 function MaxRects:insertRect(rect)
-  local newNode
+	local newNode
 	newNode = self:algorithm(rect[3], rect[4])
 	if newNode[4] == 0 then return false end
 	local rectToProcess = #self.freeRectangles
-	for i=1,rectToProcess,1 do
+	for i = 1, rectToProcess, 1 do
 		if self.freeRectangles[i] ~= _INVALID then
 			if self:splitFreeNode(self.freeRectangles[i], newNode) then
 				-- remove this later!
@@ -304,15 +312,15 @@ function MaxRects:insertRect(rect)
 	end
 	self:pruneFreeList()
 	-- attach data if we have it
-  newNode[5] = rect[5]
-	table.insert(self.usedRectangles,newNode)
+	newNode[5] = rect[5]
+	table.insert(self.usedRectangles, newNode)
 	return true
 end
 
 function MaxRects:occupancy()
 	local usedSurfaceArea = 0
 	local count = #self.usedRectangles
-	for i=1,count,1 do
+	for i = 1, count, 1 do
 		local rect = self.usedRectangles[i]
 		usedSurfaceArea = usedSurfaceArea + rect[3] * rect[4]
 	end
@@ -327,11 +335,11 @@ end
 function MaxRects:iterate(func, otherself)
 	local count = #self.usedRectangles
 	if otherself then
-		for i=1,count,1 do
-			func(otherself,self.usedRectangles[i])
+		for i = 1, count, 1 do
+			func(otherself, self.usedRectangles[i])
 		end
 	else
-		for i=1,count,1 do
+		for i = 1, count, 1 do
 			func(self.usedRectangles[i])
 		end
 	end
@@ -351,45 +359,51 @@ function MaxRects:reset(width, height, canflip) self:init(width, height, canflip
 function MaxRects:setAlgorithm(algo)
 	if FreeRectChoiceHeuristic[algo] then
 		self.algorithm = FreeRectChoiceHeuristic[algo]
-	else error("MaxRects:setAlgorithm() got bad algo: " .. algo) end
+	else
+		error("MaxRects:setAlgorithm() got bad algo: " .. algo)
+	end
 end
 
 -- inverted so that we sort descending
-local function _IsRectAreaLarger(a,b)
-  return (a[3] * a[4]) > (b[3] * b[4])
+local function _IsRectAreaLarger(a, b)
+	return (a[3] * a[4]) > (b[3] * b[4])
 end
 
 -- inverted so that we sort descending
-local function _IsLongSideLonger(a,b)
-  return math.max(a[3],a[4]) > math.max(b[3],b[4])
+local function _IsLongSideLonger(a, b)
+	return math.max(a[3], a[4]) > math.max(b[3], b[4])
 end
 
 -- inverted so that we sort descending
-local function _IsShortSideLonger(a,b)
-  return math.min(a[3],a[4]) > math.min(b[3],b[4])
+local function _IsShortSideLonger(a, b)
+	return math.min(a[3], a[4]) > math.min(b[3], b[4])
 end
 
 function MaxRects:insertCollection(collect, sort)
-  local docoll = collect
-  local all = true
-  if sort == 'SortArea' then
-    table.sort(docoll, _IsRectAreaLarger)
-  elseif sort == 'SortLongSide' then
-    table.sort(docoll, _IsLongSideLonger)
-  elseif sort == 'SortShortSide' then
-    table.sort(docoll, _IsShortSideLonger)
-  else
-    if sort then error("MaxRects:insertCollection() bad sort method: " .. sort) end
-  end
-  local totalRects = #docoll
-  local added = 0
-  for i=1, totalRects, 1 do
-    -- add the rect, or uh quit out
-    if self:insertRect(docoll[i]) then added = added + 1
-      else all = false break end
-  end
-  -- return if we added all, and the count of how many
-  return all, added
+	local docoll = collect
+	local all = true
+	if sort == 'SortArea' then
+		table.sort(docoll, _IsRectAreaLarger)
+	elseif sort == 'SortLongSide' then
+		table.sort(docoll, _IsLongSideLonger)
+	elseif sort == 'SortShortSide' then
+		table.sort(docoll, _IsShortSideLonger)
+	else
+		if sort then error("MaxRects:insertCollection() bad sort method: " .. sort) end
+	end
+	local totalRects = #docoll
+	local added = 0
+	for i = 1, totalRects, 1 do
+		-- add the rect, or uh quit out
+		if self:insertRect(docoll[i]) then
+			added = added + 1
+		else
+			all = false
+			break
+		end
+	end
+	-- return if we added all, and the count of how many
+	return all, added
 end
 
 function MaxRects:splitFreeNode(freeNode, usedNode)
@@ -402,34 +416,34 @@ function MaxRects:splitFreeNode(freeNode, usedNode)
 	if usedNode[1] < freeNode[1] + freeNode[3] and usedNode[1] + usedNode[3] > freeNode[1] then
 		-- New node at the top side of the used node.
 		if usedNode[2] > freeNode[2] and usedNode[2] < freeNode[2] + freeNode[4] then
-			local newNode = _copyrect(freeNode)	-- fast rect array copy
+			local newNode = _copyrect(freeNode) -- fast rect array copy
 			newNode[4] = usedNode[2] - newNode[2]
-			table.insert(self.freeRectangles,newNode)
+			table.insert(self.freeRectangles, newNode)
 		end
 
 		-- New node at the bottom side of the used node.
 		if usedNode[2] + usedNode[4] < freeNode[2] + freeNode[4] then
-			local newNode = _copyrect(freeNode)	-- fast rect array copy
+			local newNode = _copyrect(freeNode) -- fast rect array copy
 			newNode[2] = usedNode[2] + usedNode[4]
 			newNode[4] = freeNode[2] + freeNode[4] - (usedNode[2] + usedNode[4])
-			table.insert(self.freeRectangles,newNode)
+			table.insert(self.freeRectangles, newNode)
 		end
 	end
 
 	if usedNode[2] < freeNode[2] + freeNode[4] and usedNode[2] + usedNode[4] > freeNode[2] then
 		-- New node at the left side of the used node.
 		if usedNode[1] > freeNode[1] and usedNode[1] < freeNode[1] + freeNode[3] then
-			local newNode = _copyrect(freeNode)	-- fast rect array copy
+			local newNode = _copyrect(freeNode) -- fast rect array copy
 			newNode[3] = usedNode[1] - newNode[1]
-			table.insert(self.freeRectangles,newNode)
+			table.insert(self.freeRectangles, newNode)
 		end
 
 		-- New node at the right side of the used node.
 		if usedNode[1] + usedNode[3] < freeNode[1] + freeNode[3] then
-			local newNode = _copyrect(freeNode)	-- fast rect array copy
+			local newNode = _copyrect(freeNode) -- fast rect array copy
 			newNode[1] = usedNode[1] + usedNode[3]
 			newNode[3] = freeNode[1] + freeNode[3] - (usedNode[1] + usedNode[3])
-			table.insert(self.freeRectangles,newNode)
+			table.insert(self.freeRectangles, newNode)
 		end
 	end
 
@@ -439,10 +453,10 @@ end
 -- Go through each pair and remove any rectangle that is redundant.
 function MaxRects:pruneFreeList()
 	local rectToProcess = #self.freeRectangles
-	for i=1,rectToProcess,1 do
+	for i = 1, rectToProcess, 1 do
 		local recta = self.freeRectangles[i]
 		if recta ~= _INVALID then
-			for j=i+1,rectToProcess,1 do
+			for j = i + 1, rectToProcess, 1 do
 				local rectb = self.freeRectangles[j]
 				if rectb ~= _INVALID then
 					if _IsContainedIn(recta, rectb) then
@@ -462,9 +476,9 @@ end
 -- remove all the empty entries, backwards to prevent having to shift them about if possible
 function MaxRects:compact()
 	local rectToProcess = #self.freeRectangles
-	for i=rectToProcess,1,-1 do
+	for i = rectToProcess, 1, -1 do
 		if self.freeRectangles[i] == _INVALID then
-			table.remove(self.freeRectangles,i)
+			table.remove(self.freeRectangles, i)
 		end
 	end
 end
@@ -482,7 +496,7 @@ function MaxRects.new(width, height, canflip)
 end
 
 function MaxRects.copy(rect)
-  return { rect[1], rect[2], rect[3], rect[4], data = rect[5], flipped = rect[6] }
+	return { rect[1], rect[2], rect[3], rect[4], rect[5], rect[6] }
 end
 
 -- return the table in case a user expects that with = require 'maxrects'

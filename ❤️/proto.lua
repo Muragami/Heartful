@@ -44,7 +44,8 @@ local proto = {
 		bgcolor = { 0, 0, 0, 0 },
 		fgcolor = { 1, 1, 1, 1 },
 		style = { fill = false, outline = false },
-		box = { x = 0, y = 0, z = 0, w = 0, h = 0,	sx = 1, sy = 1, r = 0, rox = 0, roy = 0 } },
+		box = { x = 0, y = 0, z = 0, w = 0, h = 0, sx = 1, sy = 1, r = 0, rox = 0, roy = 0 }
+	},
 	-- the prototype of all entities, which are things that can be drawn
 	-- on the screen and interacted with
 	['entity'] = {
@@ -58,11 +59,13 @@ local proto = {
 		dead = false,
 		data = false,
 		destroyed = false,
-		children = {} },
+		children = {}
+	},
 	-- an alias to another entity
 	['shadow'] = {
 		super = 'entity',
-		alias = false },
+		alias = false
+	},
 	-- a screen is a container for one or more layers, which are drawn to the
 	-- application window
 	['screen'] = {
@@ -72,7 +75,8 @@ local proto = {
 		target = false,
 		bgcolor = { 1, 1, 1, 1 },
 		style = { fill = 'fillcolor', znodepth = false },
-		layer = {} },
+		layer = {}
+	},
 	-- base type of all layers you can add to a screen
 	['layer'] = {
 		super = 'entity',
@@ -83,7 +87,8 @@ local proto = {
 		bgcolor = { 1, 1, 1, 1 },
 		style = { znodepth = false, shashsize = 0 },
 		sort = false,
-		entity = {} },
+		entity = {}
+	},
 	-- raster layer contains only raster (image/sprite) objects and a raster image
 	-- to draw them from
 	['rasterlayer'] = {
@@ -95,23 +100,27 @@ local proto = {
 		rasterborder = 0,
 		raster = false,
 		megabytes = 4,
-		grow = true },
+		grow = true
+	},
 	-- basic layer makes no assumptions, and can contain any object type
 	['basiclayer'] = {
 		super = 'layer',
 		subtype = 'basic',
-		type = 'layer', },
+		type = 'layer',
+	},
 	-- user layer has custom user update and draw functions
 	['userlayer'] = {
 		super = 'layer',
 		subtype = 'user',
-		type = 'layer', },
+		type = 'layer',
+	},
 	-- shapes draws one or more shapes/visuals as an entity
 	['art'] = {
 		super = 'entity',
 		type = 'art',
 		subtype = 'nonraster',
-		element = {} },
+		element = {}
+	},
 	-- a raster image
 	['image'] = {
 		super = 'entity',
@@ -119,7 +128,8 @@ local proto = {
 		subtype = 'raster',
 		imgdata = false,
 		raster = false,
-		quad = false },
+		quad = false
+	},
 	-- a raster sprite
 	['sprite'] = {
 		super = 'entity',
@@ -128,7 +138,8 @@ local proto = {
 		quad = {},
 		animation = {},
 		raster = false,
-		imgdata = false, },
+		imgdata = false,
+	},
 	-- a raster bitmap, just like an image but we can draw to it
 	['bitmap'] = {
 		super = 'entity',
@@ -136,7 +147,8 @@ local proto = {
 		subtype = 'raster',
 		raster = false,
 		imgdata = false,
-		quad = false },
+		quad = false
+	},
 	-- an instance of text drawn from a bitmap font
 	['bitmaptext'] = {
 		super = 'entity',
@@ -144,13 +156,15 @@ local proto = {
 		subtype = 'raster',
 		raster = false,
 		imgdata = false,
-		quad = {} },
+		quad = {}
+	},
 	-- an instance of text drawn from a ttf font
 	['ttftext'] = {
 		super = 'entity',
 		type = 'font',
 		subtype = 'nonraster',
-		quad = {} },	
+		quad = {}
+	},
 	-- the prototype of all entities, which are things that cannot be drawn
 	['nonentity'] = {
 		name = false,
@@ -161,40 +175,49 @@ local proto = {
 		dead = false,
 		data = false,
 		destroyed = false,
-		children = {} },
-		-- an alias to another nonentity
+		children = {}
+	},
+	-- an alias to another nonentity
 	['duplicate'] = {
 		super = 'nonentity',
 		type = 'duplicate',
-		alias = false },
+		alias = false
+	},
 	-- a custom user drawn visual
 	['visual'] = {
 		super = 'nonentity',
-		type = 'visual' },
+		type = 'visual'
+	},
 	-- a shader you can add to a layer
 	['shader'] = {
 		super = 'nonentity',
-		type = 'shader' },
+		type = 'shader'
+	},
 	-- a config to define something
 	['config'] = {
 		super = 'nonentity',
-		type = 'config' },
+		type = 'config'
+	},
 	-- a sound sample
 	['sample'] = {
 		super = 'nonentity',
-		type = 'sample' },
+		type = 'sample'
+	},
 	-- a sound stream
 	['stream'] = {
 		super = 'nonentity',
-		type = 'stream' },
+		type = 'stream'
+	},
 	-- a map of entities
 	['map'] = {
 		super = 'nonentity',
-		type = 'map' },
+		type = 'map'
+	},
 	-- a tiling pattern map
 	['tiling'] = {
 		super = 'map',
-		type = 'tiling' },			
+		type = 'tiling'
+	},
 	-- ********************************************************************************
 	-- helper functions
 	buildSupers = buildSupers,
@@ -211,6 +234,6 @@ for k, v in pairs(proto) do -- map the functions for all objects
 		v.update = update[k] or noCall
 		v.draw = draw[k] or noCall
 	end
-end 												-- now all proto entries have .create() and such calls
+end -- now all proto entries have .create() and such calls
 
 return proto

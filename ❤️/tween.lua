@@ -22,7 +22,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-]] }
+]]
+}
 
 -- easing
 
@@ -55,7 +56,7 @@ local function outInQuad(t, b, c, d)
 end
 
 -- cubic
-local function inCubic (t, b, c, d) return c * pow(t / d, 3) + b end
+local function inCubic(t, b, c, d) return c * pow(t / d, 3) + b end
 local function outCubic(t, b, c, d) return c * (pow(t / d - 1, 3) + 1) + b end
 local function inOutCubic(t, b, c, d)
 	t = t / d * 2
@@ -100,7 +101,7 @@ local function outSine(t, b, c, d) return c * sin(t / d * (pi / 2)) + b end
 local function inOutSine(t, b, c, d) return -c / 2 * (cos(pi * t / d) - 1) + b end
 local function outInSine(t, b, c, d)
 	if t < d / 2 then return outSine(t * 2, b, c / 2, d) end
-	return inSine((t * 2) -d, b + c / 2, c / 2, d)
+	return inSine((t * 2) - d, b + c / 2, c / 2, d)
 end
 
 -- expo
@@ -125,8 +126,8 @@ local function outInExpo(t, b, c, d)
 end
 
 -- circ
-local function inCirc(t, b, c, d) return(-c * (sqrt(1 - pow(t / d, 2)) - 1) + b) end
-local function outCirc(t, b, c, d)  return(c * sqrt(1 - pow(t / d - 1, 2)) + b) end
+local function inCirc(t, b, c, d) return (-c * (sqrt(1 - pow(t / d, 2)) - 1) + b) end
+local function outCirc(t, b, c, d) return (c * sqrt(1 - pow(t / d - 1, 2)) + b) end
 local function inOutCirc(t, b, c, d)
 	t = t / d * 2
 	if t < 1 then return -c / 2 * (sqrt(1 - t * t) - 1) + b end
@@ -139,17 +140,17 @@ local function outInCirc(t, b, c, d)
 end
 
 -- elastic
-local function calculatePAS(p,a,c,d)
+local function calculatePAS(p, a, c, d)
 	p, a = p or d * 0.3, a or 0
 	if a < abs(c) then return p, c, p / 4 end -- p, a, s
-	return p, a, p / (2 * pi) * asin(c/a) -- p,a,s
+	return p, a, p / (2 * pi) * asin(c / a) -- p,a,s
 end
 local function inElastic(t, b, c, d, a, p)
 	local s
 	if t == 0 then return b end
 	t = t / d
-	if t == 1  then return b + c end
-	p,a,s = calculatePAS(p,a,c,d)
+	if t == 1 then return b + c end
+	p, a, s = calculatePAS(p, a, c, d)
 	t = t - 1
 	return -(a * pow(2, 10 * t) * sin((t * d - s) * (2 * pi) / p)) + b
 end
@@ -158,7 +159,7 @@ local function outElastic(t, b, c, d, a, p)
 	if t == 0 then return b end
 	t = t / d
 	if t == 1 then return b + c end
-	p,a,s = calculatePAS(p,a,c,d)
+	p, a, s = calculatePAS(p, a, c, d)
 	return a * pow(2, -10 * t) * sin((t * d - s) * (2 * pi) / p) + c + b
 end
 local function inOutElastic(t, b, c, d, a, p)
@@ -166,10 +167,10 @@ local function inOutElastic(t, b, c, d, a, p)
 	if t == 0 then return b end
 	t = t / d * 2
 	if t == 2 then return b + c end
-	p,a,s = calculatePAS(p,a,c,d)
+	p, a, s = calculatePAS(p, a, c, d)
 	t = t - 1
 	if t < 0 then return -0.5 * (a * pow(2, 10 * t) * sin((t * d - s) * (2 * pi) / p)) + b end
-	return a * pow(2, -10 * t) * sin((t * d - s) * (2 * pi) / p ) * 0.5 + c + b
+	return a * pow(2, -10 * t) * sin((t * d - s) * (2 * pi) / p) * 0.5 + c + b
 end
 local function outInElastic(t, b, c, d, a, p)
 	if t < d / 2 then return outElastic(t * 2, b, c / 2, d, a, p) end
@@ -224,17 +225,47 @@ local function outInBounce(t, b, c, d)
 end
 
 tween.easing = {
-	linear    = linear,
-	inQuad    = inQuad,    outQuad    = outQuad,    inOutQuad    = inOutQuad,    outInQuad    = outInQuad,
-	inCubic   = inCubic,   outCubic   = outCubic,   inOutCubic   = inOutCubic,   outInCubic   = outInCubic,
-	inQuart   = inQuart,   outQuart   = outQuart,   inOutQuart   = inOutQuart,   outInQuart   = outInQuart,
-	inQuint   = inQuint,   outQuint   = outQuint,   inOutQuint   = inOutQuint,   outInQuint   = outInQuint,
-	inSine    = inSine,    outSine    = outSine,    inOutSine    = inOutSine,    outInSine    = outInSine,
-	inExpo    = inExpo,    outExpo    = outExpo,    inOutExpo    = inOutExpo,    outInExpo    = outInExpo,
-	inCirc    = inCirc,    outCirc    = outCirc,    inOutCirc    = inOutCirc,    outInCirc    = outInCirc,
-	inElastic = inElastic, outElastic = outElastic, inOutElastic = inOutElastic, outInElastic = outInElastic,
-	inBack    = inBack,    outBack    = outBack,    inOutBack    = inOutBack,    outInBack    = outInBack,
-	inBounce  = inBounce,  outBounce  = outBounce,  inOutBounce  = inOutBounce,  outInBounce  = outInBounce
+	linear = linear,
+	inQuad = inQuad,
+	outQuad = outQuad,
+	inOutQuad = inOutQuad,
+	outInQuad = outInQuad,
+	inCubic = inCubic,
+	outCubic = outCubic,
+	inOutCubic = inOutCubic,
+	outInCubic = outInCubic,
+	inQuart = inQuart,
+	outQuart = outQuart,
+	inOutQuart = inOutQuart,
+	outInQuart = outInQuart,
+	inQuint = inQuint,
+	outQuint = outQuint,
+	inOutQuint = inOutQuint,
+	outInQuint = outInQuint,
+	inSine = inSine,
+	outSine = outSine,
+	inOutSine = inOutSine,
+	outInSine = outInSine,
+	inExpo = inExpo,
+	outExpo = outExpo,
+	inOutExpo = inOutExpo,
+	outInExpo = outInExpo,
+	inCirc = inCirc,
+	outCirc = outCirc,
+	inOutCirc = inOutCirc,
+	outInCirc = outInCirc,
+	inElastic = inElastic,
+	outElastic = outElastic,
+	inOutElastic = inOutElastic,
+	outInElastic = outInElastic,
+	inBack = inBack,
+	outBack = outBack,
+	inOutBack = inOutBack,
+	outInBack = outInBack,
+	inBounce = inBounce,
+	outBounce = outBounce,
+	inOutBounce = inOutBounce,
+	outInBounce = outInBounce
 }
 
 
@@ -247,7 +278,7 @@ local function copyTables(destination, keysTable, valuesTable)
 	if mt and getmetatable(destination) == nil then
 		setmetatable(destination, mt)
 	end
-	for k,v in pairs(keysTable) do
+	for k, v in pairs(keysTable) do
 		if type(v) == 'table' then
 			destination[k] = copyTables({}, v, valuesTable[k])
 		else
@@ -260,15 +291,17 @@ end
 local function checkSubjectAndTargetRecursively(subject, target, path)
 	path = path or {}
 	local targetType, newPath
-	for k,targetValue in pairs(target) do
+	for k, targetValue in pairs(target) do
 		targetType, newPath = type(targetValue), copyTables({}, path)
 		table.insert(newPath, tostring(k))
 		if targetType == 'number' then
-			assert(type(subject[k]) == 'number', "Parameter '" .. table.concat(newPath,'/') .. "' is missing from subject or isn't a number")
+			assert(type(subject[k]) == 'number',
+				"Parameter '" .. table.concat(newPath, '/') .. "' is missing from subject or isn't a number")
 		elseif targetType == 'table' then
 			checkSubjectAndTargetRecursively(subject[k], targetValue, newPath)
 		else
-			assert(targetType == 'number', "Parameter '" .. table.concat(newPath,'/') .. "' must be a number or table of numbers")
+			assert(targetType == 'number',
+				"Parameter '" .. table.concat(newPath, '/') .. "' must be a number or table of numbers")
 		end
 	end
 end
@@ -276,9 +309,10 @@ end
 local function checkNewParams(duration, subject, target, easing)
 	assert(type(duration) == 'number' and duration > 0, "duration must be a positive number. Was " .. tostring(duration))
 	local tsubject = type(subject)
-	assert(tsubject == 'table' or tsubject == 'userdata', "subject must be a table or userdata. Was " .. tostring(subject))
-	assert(type(target)== 'table', "target must be a table. Was " .. tostring(target))
-	assert(type(easing)=='function', "easing must be a function. Was " .. tostring(easing))
+	assert(tsubject == 'table' or tsubject == 'userdata',
+		"subject must be a table or userdata. Was " .. tostring(subject))
+	assert(type(target) == 'table', "target must be a table. Was " .. tostring(target))
+	assert(type(easing) == 'function', "easing must be a function. Was " .. tostring(easing))
 	checkSubjectAndTargetRecursively(subject, target)
 end
 
@@ -295,13 +329,13 @@ local function getEasingFunction(easing)
 end
 
 local function performEasingOnSubject(subject, target, initial, clock, duration, easing)
-	local t,b,c,d
-	for k,v in pairs(target) do
+	local t, b, c, d
+	for k, v in pairs(target) do
 		if type(v) == 'table' then
 			performEasingOnSubject(subject[k], v, initial[k], clock, duration, easing)
 		else
-			t,b,c,d = clock, initial[k], v - initial[k], duration
-			subject[k] = easing(t,b,c,d)
+			t, b, c, d = clock, initial[k], v - initial[k], duration
+			subject[k] = easing(t, b, c, d)
 		end
 	end
 end
@@ -309,7 +343,7 @@ end
 -- Tween methods
 
 local Tween = {}
-local Tween_mt = {__index = Tween}
+local Tween_mt = { __index = Tween }
 
 function Tween:set(clock)
 	assert(type(clock) == 'number', "clock must be a positive number or 0")
@@ -318,19 +352,13 @@ function Tween:set(clock)
 	self.clock = clock
 
 	if self.clock <= 0 then
-
 		self.clock = 0
 		copyTables(self.subject, self.initial)
-
 	elseif self.clock >= self.duration then -- the tween has expired
-
 		self.clock = self.duration
 		copyTables(self.subject, self.target)
-
 	else
-
 		performEasingOnSubject(self.subject, self.target, self.initial, self.clock, self.duration, self.easing)
-
 	end
 
 	return self.clock >= self.duration
@@ -345,18 +373,17 @@ function Tween:update(dt)
 	return self:set(self.clock + dt)
 end
 
-
 -- Public interface
 
 function tween.new(duration, subject, target, easing)
 	easing = getEasingFunction(easing)
 	checkNewParams(duration, subject, target, easing)
 	return setmetatable({
-		duration  = duration,
-		subject   = subject,
-		target    = target,
-		easing    = easing,
-		clock     = 0
+		duration = duration,
+		subject  = subject,
+		target   = target,
+		easing   = easing,
+		clock    = 0
 	}, Tween_mt)
 end
 

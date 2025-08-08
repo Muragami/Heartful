@@ -140,7 +140,6 @@ local function drawLayer(obj)
 		love.graphics.setShader(prevShader)
 		theShader = prevShader
 	end
-
 end
 
 -- ********************************************************************************
@@ -174,11 +173,11 @@ return {
 		if not obj.visible then return end
 		drawLayer(obj)
 	end,
-	rasterlayer = function(obj) 
+	rasterlayer = function(obj)
 		if not obj.visible then return end
 		drawLayer(obj)
 	end,
-	basiclayer = function(obj) 
+	basiclayer = function(obj)
 		if not obj.visible then return end
 		drawLayer(obj)
 	end,
@@ -186,22 +185,22 @@ return {
 		if not obj.visible then return end
 		obj.userDraw(obj)
 	end,
-	art = function(obj) 
+	art = function(obj)
 		if not obj.visible then return end
 	end,
-	image = function(obj) 
+	image = function(obj)
 		if not obj.visible then return end
 	end,
 	sprite = function(obj)
 		if not obj.visible then return end
 	end,
-	bitmap = function(obj) 
+	bitmap = function(obj)
 		if not obj.visible then return end
 	end,
-	bitmaptext = function(obj) 
+	bitmaptext = function(obj)
 		if not obj.visible then return end
 	end,
-	ttftext = function(obj) 
+	ttftext = function(obj)
 		if not obj.visible then return end
 	end,
 }

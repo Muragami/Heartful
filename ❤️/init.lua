@@ -1,7 +1,7 @@
 local hen = {
-	_VERSION    	= '❤️Heart 0.1.0',
-	_DESCRIPTION 	= '❤️ Heartful ECS Engine for LÖVE',
-	_URL         	= 'https://github.com/muragami/Heartful',
+	_VERSION      = '❤️Heart 0.1.0',
+	_DESCRIPTION  = '❤️ Heartful ECS Engine for LÖVE',
+	_URL          = 'https://github.com/muragami/Heartful',
 	_COPYRIGHT    = 'Copyright (c) 2025 Jason A. Petrasko, muragami, muragami@wishray.com',
 	_LICENSE_TYPE = 'MIT',
 	_LICENSE      = [[
@@ -22,7 +22,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-]] }
+]]
+}
 
 -- libraries
 local lume = require '❤️.lume'
@@ -38,26 +39,27 @@ local null = util.null
 -- libraries used by hen, and expose them for the user if they want to dig deeper
 hen.lib = { lume = lume, inspect = inspect, tween = tween, lip = lip, lovebird = lovebird, json = json }
 -- the current state of the engine, this can be serialized and loaded to resume
-hen.state = { }
+hen.state = {}
 -- an archive of code modules and data the game can access
-hen.archive = { }
+hen.archive = {}
 -- an table of things that could be loaded into the archive
-hen.storage = { }
+hen.storage = {}
 -- a table of loaders for various file extensions
-hen.loader = { }
+hen.loader = {}
 -- a table of Logic to apply to objects in the system
-hen.logic = { }
+hen.logic = {}
 -- a table of class tables that index classed objects
-hen.classindex = { }
+hen.classindex = {}
 -- a table of killed objects to cleanly destroy at the end of an update
-hen.killed = { }
+hen.killed = {}
 -- a table of enabled hen options (event listening, etc)
-hen.enabled = { 
+hen.enabled = {
 	event_keyboard = true,
 	event_mouse = true,
 	event_window = true,
 	event_joystick = true,
-	event_gamepad = true }
+	event_gamepad = true
+}
 
 -- install a simple Log function if verbose is set in game.json
 if HenConfig.hen.verbose then
@@ -67,15 +69,17 @@ if HenConfig.hen.verbose then
 			HenLog:write(txt)
 		end
 	end
+
 	if HenConfig.hen.Logging then
 		love.filesystem.write("hen.Log", "")
 		HenLog = love.filesystem.newFile("hen.Log", "a")
 		HenLog:setBuffer("none")
 	end
-else end
+else
+end
 
 -- build hen internally
-require '❤️.hen'(hen)
+require '❤️.hen' (hen)
 
 -- ********************************************************************************
 -- love linkage follows
@@ -162,7 +166,7 @@ end
 
 local enable = hen.enabled
 
-function love.keypressed(k, s, i) 
+function love.keypressed(k, s, i)
 	if not enable.event_keyboard then return end
 	hen:dispatch('keypressed!', k, s, i)
 end
@@ -295,13 +299,13 @@ function love.run()
 		-- Process events.
 		if love.event then
 			love.event.pump()
-			for name, a,b,c,d,e,f in love.event.poll() do
+			for name, a, b, c, d, e, f in love.event.poll() do
 				if name == "quit" then
 					if not love.quit or not love.quit() then
 						return a or 0
 					end
 				end
-				love.handlers[name](a,b,c,d,e,f)
+				love.handlers[name](a, b, c, d, e, f)
 			end
 		end
 		-- Update dt, as we'll be passing it to update

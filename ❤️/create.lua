@@ -36,7 +36,7 @@ local ffi = require 'ffi'
 local xhen = null
 
 -- construct a new maxrects packer class for a new raster layer
-local function newPacker(width, height)	return maxrects.new(width, height, false) end
+local function newPacker(width, height) return maxrects.new(width, height, false) end
 
 -- ********************************************************************************
 -- base functionality
@@ -138,7 +138,7 @@ local function setScreenShader(obj, shader)
 	if not obj.own_shader then obj.own_shader = {} end
 	local t = obj.own_shader
 	for k, v in pairs(obj.layer) do
-		if not v:getShader(xhen) then t[k] = v	end
+		if not v:getShader(xhen) then t[k] = v end
 	end
 	for k, v in pairs(t) do
 		v:setShader(shader, true) -- true so the layer knows it's a call from us
@@ -162,7 +162,7 @@ end
 local function zless(a, b) return a.box.z < b.box.z end
 local function yless(a, b) return a.box.y < b.box.y end
 local function xless(a, b) return a.box.x < b.box.x end
-local function zyless(a, b) 
+local function zyless(a, b)
 	local ax = a.box
 	local bx = b.box
 	if ax.z == bx.z then
@@ -171,7 +171,7 @@ local function zyless(a, b)
 		return ax.z < bx.z
 	end
 end
-local function zyxless(a, b) 
+local function zyxless(a, b)
 	local ax = a.box
 	local bx = b.box
 	if ax.z == bx.z then
@@ -184,7 +184,7 @@ local function zyxless(a, b)
 		return ax.z < bx.z
 	end
 end
-local function yxless(a, b) 
+local function yxless(a, b)
 	local ax = a.box
 	local bx = b.box
 	if ax.y == bx.y then
@@ -204,7 +204,7 @@ local function makeBuffer(obj, target)
 end
 
 -- TODO make the where options work
-local function sort(obj, target, how, where) 
+local function sort(obj, target, how, where)
 	makeBuffer(obj, target)
 	mergeSort(obj[target], obj._buffer, how)
 end
@@ -245,8 +245,10 @@ local sorts = {
 local function setSort(obj, method)
 	-- decode where options
 	local function str2where(str)
-		if str == '.middle' then return 50
-		elseif str == '.bottom' or str == '.right' then return 100
+		if str == '.middle' then
+			return 50
+		elseif str == '.bottom' or str == '.right' then
+			return 100
 		else
 			return 0
 		end
@@ -299,7 +301,8 @@ local function setLayerShader(obj, shader, fromscreen)
 end
 
 local function addEntity(obj, thing)
-	if thing.entity_id then error('addEntity() cannot add an entity to more than one layer, or more than once to a layer') end
+	if thing.entity_id then error(
+		'addEntity() cannot add an entity to more than one layer, or more than once to a layer') end
 	tinsert(obj.entity, thing)
 	thing.entity_id = #obj.entity
 end
@@ -354,30 +357,31 @@ end
 
 local function addRaster(layer, thing)
 	local list = layer.rasterlist
-	if thing then 
-		tinsert(list, { 0, 0, thing.box.w + (layer.rasterborder * 2), 
-													thing.box.h + (layer.rasterborder * 2), thing, false } )
+	if thing then
+		tinsert(list, { 0, 0, thing.box.w + (layer.rasterborder * 2),
+			thing.box.h + (layer.rasterborder * 2), thing, false })
 		thing.raster_id = #list
-		changedRaster(layer) 	-- tell us to rebuild the raster map on update
+		changedRaster(layer) -- tell us to rebuild the raster map on update
 	end
 end
 
 local function removeRaster(layer, thing)
 	remove(layer.rasterlist, thing.raster_id)
-	changedRaster(layer) 		-- tell us to rebuild the raster map on update
+	changedRaster(layer) -- tell us to rebuild the raster map on update
 end
 
 local function addRasterEntity(layer, thing)
 	if thing.subtype ~= 'raster' then error('addEntity() cannot add a nonraster entity to a raster layer') end
-	if thing.entity_id then error('addEntity() cannot add an entity to more than one layer, or more than once to a layer') end
+	if thing.entity_id then error(
+		'addEntity() cannot add an entity to more than one layer, or more than once to a layer') end
 	tinsert(layer.entity, thing)
 	thing.entity_id = #layer.entity
 	-- ok we added the thing, but do we have it's raster data
 	-- in the raster map for this layer?
 	thing.raster = layer.raster
 	if not thing.imgdata then error('addEntity() a raster entity must have image data') end
-	if not layer.rastermap[thing.imgdata] then 
-		if layer.static or (layer.inherit and layer.inherit.static) then 
+	if not layer.rastermap[thing.imgdata] then
+		if layer.static or (layer.inherit and layer.inherit.static) then
 			error('addEntity() cannot add a new raster entity data to a static raster layer')
 		end
 		addRaster(layer, thing)
@@ -406,7 +410,7 @@ local function layerRasterClear(layer)
 	local rmap = layer.rastermap
 	local rasterchange = false
 	local rem
-	if layer.static or (layer.inherit and layer.inherit.static) then 
+	if layer.static or (layer.inherit and layer.inherit.static) then
 		rem = nocall
 	else
 		rem = remove
@@ -414,8 +418,8 @@ local function layerRasterClear(layer)
 	for _, v in ipairs(layer.entity) do
 		kill(xhen, v)
 		rem(list, v.raster_id)
-		if rem == remove and rmap[v.imgdata] then 
-				-- reference counting for this raster data
+		if rem == remove and rmap[v.imgdata] then
+			-- reference counting for this raster data
 			rmap[v.imgdata] = rmap[v.imgdata] - 1
 			if rmap[v.imgdata] == 0 then
 				rasterchange = true
@@ -440,12 +444,12 @@ local function rasterInherit(to, from)
 	if #to.entity > 0 then -- add all our entities to the rasterlist we inherited
 		local list = to.rasterlist
 		local i = #list
-	 	for _, v in ipairs(to.entity) do
-	 		tinsert(list, { 0, 0, v.box.w, v.box.h, v, false } )
-	 		i = i + 1
+		for _, v in ipairs(to.entity) do
+			tinsert(list, { 0, 0, v.box.w, v.box.h, v, false })
+			i = i + 1
 			v.raster_id = i
-	 	end
-	 	to.rasterchange = true 		-- tell us to rebuild the raster map on update
+		end
+		to.rasterchange = true -- tell us to rebuild the raster map on update
 	end
 end
 
@@ -552,7 +556,7 @@ local function setDrawCfg(obj, cfg)
 	end
 	if cfg.style then copyInto(cfg.style, obj.style) end
 	if obj._setCfg then
-		for _, v in ipairs(obj._setCfg) do v(obj, cfg)	end
+		for _, v in ipairs(obj._setCfg) do v(obj, cfg) end
 	end
 end
 
@@ -570,8 +574,8 @@ local function getDrawCfg(obj, t)
 	t.scale = { x = box.sx, y = box.sy }
 	t.style = makeCopy(obj.style)
 	if obj._getCfg then
-		for _, v in ipairs(obj._getCfg) do v(obj, t)	end
-	end	
+		for _, v in ipairs(obj._getCfg) do v(obj, t) end
+	end
 	return t
 end
 
@@ -600,7 +604,7 @@ local function installDrawable(obj)
 	obj.localPalette = localPalette
 end
 
--- constructor code for all the things, we just assign the local functions to 
+-- constructor code for all the things, we just assign the local functions to
 -- created objects in the 'constructor' create() function for each object type
 return {
 	_setxhen = function(hen)
@@ -613,11 +617,11 @@ return {
 		installDrawable(obj)
 	end,
 	-- entities and derived
-	entity = function(obj, cfg) 
+	entity = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 	end,
-	shadow = function(obj, cfg) 
+	shadow = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 	end,
@@ -639,7 +643,7 @@ return {
 		installDrawable(obj)
 		installLayer(obj)
 	end,
-	rasterlayer = function(obj, cfg) 
+	rasterlayer = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 		installRasterLayer(obj)
@@ -658,12 +662,12 @@ return {
 			obj.rasterbox.h = sz
 		end
 	end,
-	basiclayer = function(obj, cfg) 
+	basiclayer = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 		installLayer(obj)
 	end,
-	userlayer = function(obj, cfg) 
+	userlayer = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 		installLayer(obj)
@@ -671,57 +675,57 @@ return {
 	end,
 	-- ********************************************************************************
 	-- entities that go in the layer and therefore onto the screen
-	art = function(obj, cfg) 
+	art = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 	end,
-	image = function(obj, cfg) 
+	image = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 	end,
-	sprite = function(obj, cfg) 
+	sprite = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 	end,
-	bitmap = function(obj, cfg) 
+	bitmap = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 	end,
-	bitmaptext = function(obj, cfg) 
+	bitmaptext = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 	end,
-	ttftext = function(obj, cfg) 
+	ttftext = function(obj, cfg)
 		installBase(obj)
 		installDrawable(obj)
 	end,
 	-- ********************************************************************************
 	-- nonentities and derived
-	nonentity = function(obj, cfg) 
+	nonentity = function(obj, cfg)
 		installBase(obj)
 	end,
-	duplicate = function(obj, cfg) 
+	duplicate = function(obj, cfg)
 		installBase(obj)
 	end,
-	visual = function(obj, cfg) 
+	visual = function(obj, cfg)
 		installBase(obj)
 	end,
-	shader = function(obj, cfg) 
+	shader = function(obj, cfg)
 		installBase(obj)
 	end,
-	config = function(obj, cfg) 
+	config = function(obj, cfg)
 		installBase(obj)
 	end,
-	sample = function(obj, cfg) 
+	sample = function(obj, cfg)
 		installBase(obj)
 	end,
-	stream = function(obj, cfg) 
+	stream = function(obj, cfg)
 		installBase(obj)
 	end,
-	map = function(obj, cfg) 
+	map = function(obj, cfg)
 		installBase(obj)
 	end,
-	tiling = function(obj, cfg) 
+	tiling = function(obj, cfg)
 		installBase(obj)
 	end,
 }

@@ -1,4 +1,4 @@
-local inspect = {
+local inspect     = {
 	_VERSION      = 'inspect.lua 3.1.0',
 	_DESCRIPTION  = 'human-readable representations of tables',
 	_URL          = 'http://github.com/kikito/inspect.lua',
@@ -22,12 +22,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-]] }
+]]
+}
 
-local tostring = tostring
+local tostring    = tostring
 
-inspect.KEY       = setmetatable({}, {__tostring = function() return 'inspect.KEY' end})
-inspect.METATABLE = setmetatable({}, {__tostring = function() return 'inspect.METATABLE' end})
+inspect.KEY       = setmetatable({}, { __tostring = function() return 'inspect.KEY' end })
+inspect.METATABLE = setmetatable({}, { __tostring = function() return 'inspect.METATABLE' end })
 
 local function rawpairs(t)
 	return next, t, nil
@@ -44,14 +45,20 @@ end
 
 -- \a => '\\a', \0 => nil
 local shortControlCharEscapes = {
-	["\a"] = "\\a",  ["\b"] = "\\b", ["\f"] = "\\f", ["\n"] = "\\n",
-	["\r"] = "\\r",  ["\t"] = "\\t", ["\v"] = "\\v", ["\127"] = "\\127",
+	["\a"] = "\\a",
+	["\b"] = "\\b",
+	["\f"] = "\\f",
+	["\n"] = "\\n",
+	["\r"] = "\\r",
+	["\t"] = "\\t",
+	["\v"] = "\\v",
+	["\127"] = "\\127",
 }
-local longControlCharEscapes = {["\127"]="\127"} -- \a => nil, \0 => \000, 31 => \031
-for i=0, 31 do
+local longControlCharEscapes = { ["\127"] = "\127" } -- \a => nil, \0 => \000, 31 => \031
+for i = 0, 31 do
 	local ch = string.char(i)
 	if not shortControlCharEscapes[ch] then
-		shortControlCharEscapes[ch] = "\\"..i
+		shortControlCharEscapes[ch] = "\\" .. i
 		longControlCharEscapes[ch]  = string.format("\\%03d", i)
 	end
 end
@@ -59,24 +66,29 @@ end
 
 local function escape(str)
 	return (str:gsub("\\", "\\\\")
-						 :gsub("(%c)%f[0-9]", longControlCharEscapes)
-						 :gsub("%c", shortControlCharEscapes))
+		:gsub("(%c)%f[0-9]", longControlCharEscapes)
+		:gsub("%c", shortControlCharEscapes))
 end
 
 local function isIdentifier(str)
-	return type(str) == 'string' and str:match( "^[_%a][_%a%d]*$" )
+	return type(str) == 'string' and str:match("^[_%a][_%a%d]*$")
 end
 
 local function isSequenceKey(k, sequenceLength)
 	return type(k) == 'number'
-		 and 1 <= k
-		 and k <= sequenceLength
-		 and math.floor(k) == k
+		and 1 <= k
+		and k <= sequenceLength
+		and math.floor(k) == k
 end
 
 local defaultTypeOrders = {
-	['number']   = 1, ['boolean']  = 2, ['string'] = 3, ['table'] = 4,
-	['function'] = 5, ['userdata'] = 6, ['thread'] = 7
+	['number'] = 1,
+	['boolean'] = 2,
+	['string'] = 3,
+	['table'] = 4,
+	['function'] = 5,
+	['userdata'] = 6,
+	['thread'] = 7
 }
 
 local function sortKeys(a, b)
@@ -87,9 +99,12 @@ local function sortKeys(a, b)
 
 	local dta, dtb = defaultTypeOrders[ta], defaultTypeOrders[tb]
 	-- Two default types are compared according to the defaultTypeOrders table
-	if dta and dtb then return defaultTypeOrders[ta] < defaultTypeOrders[tb]
-	elseif dta     then return true  -- default types before custom ones
-	elseif dtb     then return false -- custom types after default ones
+	if dta and dtb then
+		return defaultTypeOrders[ta] < defaultTypeOrders[tb]
+	elseif dta then
+		return true               -- default types before custom ones
+	elseif dtb then
+		return false              -- custom types after default ones
 	end
 
 	-- custom types are sorted out alphabetically
@@ -100,10 +115,10 @@ end
 -- tables aren't pure sequences. So we implement our own # operator.
 local function getSequenceLength(t)
 	local len = 1
-	local v = rawget(t,len)
+	local v = rawget(t, len)
 	while v ~= nil do
 		len = len + 1
-		v = rawget(t,len)
+		v = rawget(t, len)
 	end
 	return len - 1
 end
@@ -111,7 +126,7 @@ end
 local function getNonSequentialKeys(t)
 	local keys, keysLength = {}, 0
 	local sequenceLength = getSequenceLength(t)
-	for k,_ in rawpairs(t) do
+	for k, _ in rawpairs(t) do
 		if not isSequenceKey(k, sequenceLength) then
 			keysLength = keysLength + 1
 			keys[keysLength] = k
@@ -127,7 +142,7 @@ local function countTableAppearances(t, tableAppearances)
 	if type(t) == 'table' then
 		if not tableAppearances[t] then
 			tableAppearances[t] = 1
-			for k,v in rawpairs(t) do
+			for k, v in rawpairs(t) do
 				countTableAppearances(k, tableAppearances)
 				countTableAppearances(v, tableAppearances)
 			end
@@ -142,14 +157,14 @@ end
 
 local copySequence = function(s)
 	local copy, len = {}, #s
-	for i=1, len do copy[i] = s[i] end
+	for i = 1, len do copy[i] = s[i] end
 	return copy, len
 end
 
 local function makePath(path, ...)
-	local keys = {...}
+	local keys = { ... }
 	local newPath, len = copySequence(path)
-	for i=1, #keys do
+	for i = 1, #keys do
 		newPath[len + i] = keys[i]
 	end
 	return newPath
@@ -165,14 +180,14 @@ local function processRecursive(process, item, path, visited)
 		visited[item] = processedCopy
 		local processedKey
 
-		for k,v in rawpairs(processed) do
+		for k, v in rawpairs(processed) do
 			processedKey = processRecursive(process, k, makePath(path, k, inspect.KEY), visited)
 			if processedKey ~= nil then
 				processedCopy[processedKey] = processRecursive(process, v, makePath(path, processedKey), visited)
 			end
 		end
 
-		local mt  = processRecursive(process, getmetatable(processed), makePath(path, inspect.METATABLE), visited)
+		local mt = processRecursive(process, getmetatable(processed), makePath(path, inspect.METATABLE), visited)
 		if type(mt) ~= 'table' then mt = nil end -- ignore not nil/table __metatable field
 		setmetatable(processedCopy, mt)
 		processed = processedCopy
@@ -185,13 +200,13 @@ end
 -------------------------------------------------------------------
 
 local Inspector = {}
-local Inspector_mt = {__index = Inspector}
+local Inspector_mt = { __index = Inspector }
 
 function Inspector:puts(...)
-	local args   = {...}
+	local args   = { ... }
 	local buffer = self.buffer
 	local len    = #buffer
-	for i=1, #args do
+	for i = 1, #args do
 		len = len + 1
 		buffer[len] = args[i]
 	end
@@ -214,7 +229,7 @@ end
 function Inspector:getId(v)
 	local id = self.ids[v]
 	if not id then
-		local tv = type(v)
+		local tv        = type(v)
 		id              = (self.maxIds[tv] or 0) + 1
 		self.maxIds[tv] = id
 		self.ids[v]     = id
@@ -240,19 +255,19 @@ function Inspector:putTable(t)
 		if self.tableAppearances[t] > 1 then self:puts('<', self:getId(t), '>') end
 
 		local nonSequentialKeys, nonSequentialKeysLength, sequenceLength = getNonSequentialKeys(t)
-		local mt                = getmetatable(t)
+		local mt                                                         = getmetatable(t)
 
 		self:puts('{')
 		self:down(function()
 			local count = 0
-			for i=1, sequenceLength do
+			for i = 1, sequenceLength do
 				if count > 0 then self:puts(',') end
 				self:puts(' ')
 				self:putValue(t[i])
 				count = count + 1
 			end
 
-			for i=1, nonSequentialKeysLength do
+			for i = 1, nonSequentialKeysLength do
 				local k = nonSequentialKeys[i]
 				if count > 0 then self:puts(',') end
 				self:tabify()
@@ -272,7 +287,7 @@ function Inspector:putTable(t)
 
 		if nonSequentialKeysLength > 0 or type(mt) == 'table' then -- result is multi-lined. Justify closing }
 			self:tabify()
-		elseif sequenceLength > 0 then -- array tables have one extra space before closing }
+		elseif sequenceLength > 0 then                       -- array tables have one extra space before closing }
 			self:puts(' ')
 		end
 
@@ -286,7 +301,7 @@ function Inspector:putValue(v)
 	if tv == 'string' then
 		self:puts(smartQuote(escape(v)))
 	elseif tv == 'number' or tv == 'boolean' or tv == 'nil' or
-				 tv == 'cdata' or tv == 'ctype' then
+		tv == 'cdata' or tv == 'ctype' then
 		self:puts(tostring(v))
 	elseif tv == 'table' then
 		self:putTable(v)
@@ -300,9 +315,9 @@ end
 function inspect.inspect(root, options)
 	options       = options or {}
 
-	local depth   = options.depth   or math.huge
+	local depth   = options.depth or math.huge
 	local newline = options.newline or '\n'
-	local indent  = options.indent  or '  '
+	local indent  = options.indent or '  '
 	local process = options.process
 
 	if process then

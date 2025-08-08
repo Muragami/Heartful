@@ -21,7 +21,6 @@ function shash.new(cellsize)
 	return self
 end
 
-
 local function coord_to_key(x, y)
 	return x + y * 1e7
 end
@@ -84,7 +83,6 @@ function shash:add(obj, x, y, w, h)
 	each_overlapping_cell(self, e, add_entity_to_cell, e)
 end
 
-
 function shash:remove(obj)
 	-- Get entity of obj
 	local e = self.entities[obj]
@@ -93,7 +91,6 @@ function shash:remove(obj)
 	-- Remove from cells
 	each_overlapping_cell(self, e, remove_entity_from_cell, e)
 end
-
 
 function shash:update(obj, x, y, w, h)
 	-- Get entity from obj
@@ -121,7 +118,6 @@ function shash:update(obj, x, y, w, h)
 	end
 end
 
-
 function shash:clear()
 	-- Clear all cells and entities
 	for k in pairs(self.cells) do
@@ -131,7 +127,6 @@ function shash:clear()
 		self.entities[k] = nil
 	end
 end
-
 
 local function overlaps(e1, e2)
 	return e1[3] > e2[1] and e1[1] < e2[3] and e1[4] > e2[2] and e1[2] < e2[4]
@@ -176,7 +171,6 @@ function shash:each(x, y, w, h, fn, ...)
 	end
 end
 
-
 function shash:info(opt, ...)
 	if opt == "cells" or opt == "entities" then
 		local n = 0
@@ -186,11 +180,10 @@ function shash:info(opt, ...)
 		return n
 	end
 	if opt == "cell" then
-		local t = self.cells[ coord_to_key(...) ]
+		local t = self.cells[coord_to_key(...)]
 		return t and #t or 0
 	end
-	error( string.format("invalid opt '%s'", opt) )
+	error(string.format("invalid opt '%s'", opt))
 end
-
 
 return shash

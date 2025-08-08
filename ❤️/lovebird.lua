@@ -33,7 +33,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-]] }
+]]
+}
 
 lovebird.loadstring = loadstring or load
 lovebird.inited = false
@@ -466,7 +467,7 @@ function lovebird.init()
 	-- Compile page templates
 	for k, page in pairs(lovebird.pages) do
 		lovebird.pages[k] = lovebird.template(page, "lovebird, req",
-																					"pages." .. k)
+			"pages." .. k)
 	end
 	lovebird.inited = true
 end
@@ -474,7 +475,7 @@ end
 function lovebird.template(str, params, chunkname)
 	params = params and ("," .. params) or ""
 	local f = function(x) return string.format(" echo(%q)", x) end
-	str = ("?>"..str.."<?lua"):gsub("%?>(.-)<%?lua", f)
+	str = ("?>" .. str .. "<?lua"):gsub("%?>(.-)<%?lua", f)
 	str = "local echo " .. params .. " = ..." .. str
 	local fn = assert(lovebird.loadstring(str, chunkname))
 	return function(...)
@@ -492,13 +493,13 @@ function lovebird.map(t, fn)
 end
 
 function lovebird.trace(...)
-	local str = "[lovebird] " .. table.concat(lovebird.map({...}, tostring), " ")
+	local str = "[lovebird] " .. table.concat(lovebird.map({ ... }, tostring), " ")
 	print(str)
 	if not lovebird.wrapprint then lovebird.print(str) end
 end
 
 function lovebird.unescape(str)
-	local f = function(x) return string.char(tonumber("0x"..x)) end
+	local f = function(x) return string.char(tonumber("0x" .. x)) end
 	return (str:gsub("%+", " "):gsub("%%(..)", f))
 end
 
@@ -520,7 +521,7 @@ local htmlescapemap = {
 }
 
 function lovebird.htmlescape(str)
-	return ( str:gsub("[<&\"']", htmlescapemap) )
+	return (str:gsub("[<&\"']", htmlescapemap))
 end
 
 function lovebird.truncate(str, len)
@@ -583,7 +584,7 @@ function lovebird.recalcbuffer()
 			end
 			if lovebird.timestamp then
 				str = os.date('<span class="timestamp">%H:%M:%S</span> ', line.time) ..
-							str
+					str
 			end
 		end
 		return str
@@ -632,9 +633,9 @@ function lovebird.onrequest(req, client)
 			contenttype = "application/json"
 		end
 		str = "HTTP/1.1 200 OK\r\n" ..
-					"Content-Type: " .. contenttype .. "\r\n" ..
-					"Content-Length: " .. #data .. "\r\n" ..
-					"\r\n" .. data
+			"Content-Type: " .. contenttype .. "\r\n" ..
+			"Content-Length: " .. #data .. "\r\n" ..
+			"\r\n" .. data
 	end, lovebird.onerror)
 	return str
 end
@@ -734,6 +735,5 @@ function lovebird.update()
 		end
 	end
 end
-
 
 return lovebird
